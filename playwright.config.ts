@@ -33,7 +33,7 @@ export default defineConfig({
     {
       name: 'chromium-auth',
       dependencies: ['setup'], 
-      testMatch: ['02_open_account.spec.ts', '03_transfer_funds.spec.ts'], 
+      testMatch: ['02_open_account.spec.ts', '03_tranfer_funds.spec.ts'], 
       use: {
         ...devices['Desktop Chrome'],
         storageState: STORAGE_STATE_PATH, 
