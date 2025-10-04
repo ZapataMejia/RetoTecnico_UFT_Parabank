@@ -16,7 +16,7 @@ export default defineConfig({
   use: {
     actionTimeout: 15000,
     baseURL: 'https://parabank.parasoft.com/parabank/index.htm',
-    headless: !!process.env.CI,
+    headless: true, 
     viewport: { width: 1280, height: 720 },
     trace: 'on-first-retry',
   },
@@ -33,7 +33,7 @@ export default defineConfig({
     {
       name: 'chromium-auth',
       dependencies: ['setup'], 
-      testMatch: ['02_open_account.spec.ts', '03_tranfer_funds.spec.ts'], 
+      testMatch: ['02_open_account.spec.ts', '03_transfer_funds.spec.ts'], 
       use: {
         ...devices['Desktop Chrome'],
         storageState: STORAGE_STATE_PATH, 
