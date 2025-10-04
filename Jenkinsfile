@@ -8,15 +8,22 @@ pipeline {
             }
         }
         
-        stage('Execute UFT Functional Tests') {
+        stage('Setup Dependencies') {
             steps {
-                bat '"C:/Program Files (x86)/Micro Focus/UFT One/bin/UFT.exe" -run -test "%WORKSPACE%/Parabank_Test/Parabank_Test.usr" -result "%WORKSPACE%/UFT_Reports"'
+                sh 'npm install' 
+                sh 'npx playwright install --with-deps'
             }
         }
         
-        stage('Publish Artifacts and Report') {
+        stage('Execute Playwright Tests') {
             steps {
-                archiveArtifacts artifacts: 'UFT_Reports/**', onlyIfSuccessful: true
+                sh 'npx playwright test --reporter=junit --workers=1'
+            }
+        }
+        
+        stage('Publish Artifacts') {
+            steps {
+                junit 'test-results/junit.xml' 
             }
         }
     }

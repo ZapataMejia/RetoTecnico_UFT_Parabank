@@ -1,0 +1,22 @@
+{
+  "name": "retotecnico_uft_parabank",
+  "version": "1.0.0",
+  "description": "Este repositorio contiene la solución completa al Reto Técnico de Automatización. Nuestro objetivo fue establecer una estrategia de **Integración Continua y Entrega Continua (CI/CD)** para el sistema Parabank, enfocándonos en la **trazabilidad total de la calidad** desde la planificación hasta la ejecución.",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZapataMejia/RetoTecnico_UFT_Parabank.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZapataMejia/RetoTecnico_UFT_Parabank/issues"
+  },
+  "homepage": "https://github.com/ZapataMejia/RetoTecnico_UFT_Parabank#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.55.1",
+    "@types/node": "^24.6.2"
+  }
+}
