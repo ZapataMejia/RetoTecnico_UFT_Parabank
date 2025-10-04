@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        CI = 'true' 
+        CI = 'true'
         DOCKER_IMAGE = 'playwright-parabank-ci'
     }
 
@@ -17,6 +17,9 @@ pipeline {
 
         stage('Run Playwright Tests') {
             steps {
+                sh 'rm -rf test-results || true' 
+                sh 'mkdir -p test-results' 
+                
                 sh "docker run --rm -v ${WORKSPACE}:/usr/src/app ${DOCKER_IMAGE} npx playwright test --reporter=junit"
             }
         }
