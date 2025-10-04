@@ -1,42 +1,50 @@
-# Solución de Automatización de Pruebas: Parabank - UFT One & Jenkins
+# 🚀 Reto Técnico Final: Framework de Automatización Parabank
 
-## Resumen Ejecutivo
+## Introducción
 
-Este repositorio contiene la solución completa al Reto Técnico, enfocada en la implementación de una estrategia de **Integración Continua y Entrega Continua (CI/CD)** para la aplicación Parabank.
-
-El objetivo principal es demostrar la **trazabilidad de la calidad** desde la planificación en Jira hasta la ejecución automatizada en un entorno de CI/CD.
-
-## Flujo de Trabajo y Metodología
-
-| Herramienta | Función en el Proyecto |
-| :--- | :--- |
-| **Jira (Scrum)** | Gestión completa del proyecto, planificación de Historias de Usuario (US) y seguimiento de las Tareas y Evidencias. |
-| **Git/GitHub** | Control de versiones de todo el código (scripts de UFT y archivos de infraestructura). |
-| **UFT One** | Desarrollo de los tres escenarios funcionales con un **Framework Modular** (Acciones Reutilizables) y **Data-Driven Testing** (Data Table). |
-| **Jenkins/Docker** | Orquestación del pipeline de CI/CD para la ejecución desatendida de las pruebas en Windows. |
+Este documento presenta el **Framework de Automatización** desarrollado con **Playwright** y **TypeScript**, diseñado para validar los procesos clave de la aplicación **Parabank**. El proyecto cumple con los requisitos funcionales (Registro, Creación de Cuenta, Transferencia de Fondos) y los criterios técnicos de **modularidad (POM)**, **estabilidad** y **Continuous Integration (CI)**.
 
 ---
 
-## 1. Requisitos del Entorno de Ejecución
+## 1. Arquitectura y Estructura del Framework
 
-Para replicar este proyecto o ejecutar el pipeline en una nueva máquina, se requieren los siguientes componentes en el host de Windows:
+El framework está construido bajo el patrón de diseño **Page Object Model (POM)** para lograr una separación clara entre la lógica de prueba y los localizadores/métodos de interacción.
 
-* **Sistema Operativo:** Windows 10/11 (Requerido por UFT One).
-* **Herramientas de Automatización:** OpenText UFT One (para el desarrollo y la ejecución).
-* **Contenerización y CI:** Docker Desktop (para levantar el servidor Jenkins) y Java JDK.
+### Estructura Lógica de Archivos
 
-## 2. Estructura del Framework UFT
+| Componente | Archivo(s) | Responsabilidad Clave |
+| :--- | :--- | :--- |
+| **Test Specs** | `tests/01_register.spec.ts`, `tests/02_open_account.spec.ts`, `tests/03_transfer_funds.spec.ts` | Define los *flujos de negocio* (historias de usuario). Cada archivo es un escenario independiente. |
+| **Page Object Model (POM)** | `tests/pages/AccountServicesPage.ts` | **Centraliza todos los selectores, datos fijos de login**, y métodos de interacción (`login()`, `openNewSavingsAccount()`, etc.). **Máxima Reutilización.** |
+| **Configuración** | `playwright.config.ts` | Configuración de entorno: Navegador (Chromium), **Timeouts**, *baseURL* y definición del reportero JUnit. |
+| **Integración Continua** | `Dockerfile`, `Jenkinsfile` | Define el entorno de ejecución (Docker) y la *pipeline* para la automatización en Jenkins. |
 
-El proyecto sigue un enfoque modular, similar al **Page Object Model (POM)**:
+### Diagrama de Flujo del Test
 
-* **Test Principal (`Parabank_Test.usr`):** Orquesta el flujo de ejecución.
-* **Acciones Reutilizables:** Cada acción (Registro, Creación de Cuenta, Transferencia) actúa como una función, promoviendo la reutilización del código.
-* **Repositorio de Objetos Compartido (`.tsr`):** Centraliza todos los objetos de la aplicación para un mantenimiento eficiente.
-* **Data Table Global:** Todos los datos de prueba son parametrizados y manejados a nivel global para facilitar el Data-Driven Testing.
+Este diagrama visualiza cómo los diferentes archivos del proyecto interactúan con el Page Object Model, demostrando la **modularidad**:
 
-## 3. Configuración de CI/CD
+```mermaid
+graph TD
+    A[Inicio Ejecución Tests] --> B{tests/01_register.spec.ts<br>(US-1: Registro)};
 
-La integración se realiza mediante Jenkins, utilizando un agente Windows para invocar el ejecutable de UFT.
+    subgraph Page Object Model (tests/pages/AccountServicesPage.ts)
+        F[Método: login()] --> G{Interactúa con Campos de Login<br>(Usuario Fijo: QASanti)};
+        G --> H[Valida Acceso al Dashboard];
+        I[Método: openNewSavingsAccount()] --> J{Lógica US-2};
+        O[Método: transferFunds()] --> P{Lógica US-3};
+    end
 
-* **Dockerfile:** Define la imagen ligera de Jenkins que incluye Git para el 'Checkout Code'.
-* **Jenkinsfile (Pipeline):** Script de orquestación que define las etapas: **Checkout**, **Ejecución de UFT** (vía CLI) y **Publicación de Reportes** (para generar evidencias en el servidor).
+    B --> C[Usa Faker.js para Datos Dinámicos];
+    C --> D[Aplica Estrategia Clic + Fill];
+    D --> E[Validación de Bienvenida];
+
+    T{tests/02_open_account.spec.ts<br>(US-2: Crear Cuenta)} --> F;
+    F --> I;
+    I --> U[Valida Éxito de Creación];
+
+    V{tests/03_transfer_funds.spec.ts<br>(US-3: Transferir Fondos)} --> F;
+    F --> O;
+    O --> W[Valida Éxito de Transferencia];
+
+    E & U & W --> X[Reporte JUnit generado (test-results/junit.xml)];
+    X --> Y[Fin Ejecución Tests];

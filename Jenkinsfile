@@ -1,29 +1,38 @@
 pipeline {
-    agent any 
+    agent any
+
+    environment {
+        CI = 'true'
+        DOCKER_IMAGE = 'playwright-parabank-ci'
+    }
 
     stages {
-        stage('Checkout Code') {
+        stage('Build Docker Image') {
             steps {
-                git url: 'https://github.com/ZapataMejia/RetoTecnico_UFT_Parabank', credentialsId: 'github-santiago' 
+                script {
+                    docker.build(DOCKER_IMAGE)
+                }
+            }
+        }
+
+        stage('Run Playwright Tests') {
+            steps {
+                script {
+                    docker.image(DOCKER_IMAGE).inside {
+                        sh 'npx playwright test --reporter=junit'
+                    }
+                }
             }
         }
         
-        stage('Setup Dependencies') {
-            steps {
-                sh 'npm install' 
-                sh 'npx playwright install --with-deps'
+        stage('Publish Test Results') {
+            when {
+                always()
             }
-        }
-        
-        stage('Execute Playwright Tests') {
             steps {
-                sh 'npx playwright test --reporter=junit --workers=1'
-            }
-        }
-        
-        stage('Publish Artifacts') {
-            steps {
-                junit 'test-results/junit.xml' 
+                junit 'test-results/junit.xml'
+                
+                echo 'Pruebas finalizadas. Revisa los resultados publicados.'
             }
         }
     }
