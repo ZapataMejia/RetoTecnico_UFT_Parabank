@@ -18,7 +18,8 @@ pipeline {
         stage('Run Playwright Tests') {
             steps {
                 sh 'rm -f junit-report.xml || true' 
-                sh "docker run --rm -u 1000:1000 -v ${WORKSPACE}:/usr/src/app ${DOCKER_IMAGE} sh -c \"chown -R 1000:1000 . && npx playwright test --reporter=junit\""
+                
+                sh "docker run --rm -v ${WORKSPACE}:/usr/src/app -e PLAYWRIGHT_JSON_OUTPUT_NAME=junit-report.xml ${DOCKER_IMAGE} npx playwright test --reporter=junit"
             }
         }
         
