@@ -17,18 +17,11 @@ pipeline {
 
         stage('Run Playwright Tests') {
             steps {
-                script {
-                    docker.image(DOCKER_IMAGE).inside {
-                        sh 'npx playwright test --reporter=junit'
-                    }
-                }
+                sh "docker run --rm -v ${WORKSPACE}:/usr/src/app ${DOCKER_IMAGE} npx playwright test --reporter=junit"
             }
         }
         
         stage('Publish Test Results') {
-            when {
-                always()
-            }
             steps {
                 junit 'test-results/junit.xml'
                 
