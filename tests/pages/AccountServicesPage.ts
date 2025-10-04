@@ -1,18 +1,12 @@
 import { Page, expect, Locator } from '@playwright/test';
 
-// DATOS LOGIN 
-const TEMP_USERNAME = 'QASanti'; 
-const TEMP_PASSWORD = 'QwertyuiopA23';
-
 export class AccountServicesPage {
     readonly page: Page;
     
-    // Selectores de Login
+    // Selectores de Login 
     readonly usernameInput: Locator;
     readonly passwordInput: Locator;
     readonly loginButton: Locator;
-
-    // Selectores de Menú y Navegación
     readonly openAccountLink: Locator;
     readonly transferFundsLink: Locator;
 
@@ -31,8 +25,6 @@ export class AccountServicesPage {
 
     constructor(page: Page) {
         this.page = page;
-        
-        // Inicialización de Selectores
         this.usernameInput = page.locator('input[name="username"]');
         this.passwordInput = page.locator('input[name="password"]');
         this.loginButton = page.getByRole('button', { name: 'Log In' });
@@ -52,16 +44,9 @@ export class AccountServicesPage {
         this.transferSuccessMessage = page.getByText('Transfer Complete!');
     }
     
-    async login() {
-        await this.page.goto('https://parabank.parasoft.com/parabank/index.htm');
-        await this.usernameInput.fill(TEMP_USERNAME);
-        await this.passwordInput.fill(TEMP_PASSWORD);
-        await this.loginButton.click();
-        await expect(this.page.getByRole('heading', { name: 'Accounts Overview' })).toBeVisible();
-    }
-    
     // US-2 (Creación de Cuenta)
     async openNewSavingsAccount() {
+        await this.page.goto('https://parabank.parasoft.com/parabank/overview.htm'); 
         await this.openAccountLink.click();
         await this.accountTypeDropdown.selectOption('1'); 
         await this.minimumDepositText.click(); 
@@ -69,8 +54,10 @@ export class AccountServicesPage {
         await this.openAccountButton.click({ force: true }); 
         await expect(this.successMessageAccount).toBeVisible();
     }
-    // US-3 (Transferencia de Fondos)
+
+    // US-3 (Transferencia de Fondos) 
     async transferFundsByIndex(amount: string, fromIndex: number, toIndex: number) {
+        await this.page.goto('https://parabank.parasoft.com/parabank/overview.htm'); 
         await this.transferFundsLink.click();
         await this.amountInput.fill(amount);
         await this.fromAccountDropdown.selectOption({ index: fromIndex });

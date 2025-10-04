@@ -1,19 +1,21 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const STORAGE_STATE_PATH = 'playwright/.auth/user.json'; 
+
 export default defineConfig({
-  testDir: './tests',
-  fullyParallel: true,
+  testDir: './tests', 
+  fullyParallel: false, 
+  workers: 1, 
+  
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
   timeout: 60000,
 
-  // Configuración del Reportero para Jenkins
   reporter: [['junit', { outputFile: 'test-results/junit.xml' }]],
 
   use: {
     actionTimeout: 15000,
-    baseURL: 'https://parabank.parasoft.com/parabank',
+    baseURL: 'https://parabank.parasoft.com/parabank/index.htm',
     headless: !!process.env.CI,
     viewport: { width: 1280, height: 720 },
     trace: 'on-first-retry',
@@ -21,10 +23,20 @@ export default defineConfig({
 
   projects: [
     {
-      name: 'chromium',
+      name: 'setup',
+      testMatch: '01_register.spec.ts', 
       use: {
         ...devices['Desktop Chrome'],
-        // headless: true, 
+        baseURL: 'https://parabank.parasoft.com/parabank/index.htm', 
+      },
+    },
+    {
+      name: 'chromium-auth',
+      dependencies: ['setup'], 
+      testMatch: ['02_open_account.spec.ts', '03_transfer_funds.spec.ts'], 
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: STORAGE_STATE_PATH, 
         baseURL: 'https://parabank.parasoft.com/parabank/index.htm',
       },
     },
