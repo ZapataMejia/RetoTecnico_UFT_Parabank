@@ -17,17 +17,14 @@ pipeline {
 
         stage('Run Playwright Tests') {
             steps {
-                sh 'rm -f junit-report.xml || true' 
-                
-                sh "docker run --rm -v ${WORKSPACE}:/usr/src/app -e PLAYWRIGHT_JSON_OUTPUT_NAME=junit-report.xml ${DOCKER_IMAGE} npx playwright test --reporter=junit"
+                sh "docker run --rm -v ${WORKSPACE}:/usr/src/app ${DOCKER_IMAGE} sh -c \"npx playwright test --reporter=junit > junit-report.xml && cat junit-report.xml\" > junit-report.xml"
             }
         }
         
         stage('Publish Test Results') {
             steps {
-                sh 'ls -l junit-report.xml' 
                 junit 'junit-report.xml' 
-                echo 'Pruebas finalizadas. Revisa los resultados publicados.'
+                echo 'Pruebas finalizadas y resultados publicados.'
             }
         }
     }
