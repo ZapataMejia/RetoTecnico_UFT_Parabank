@@ -24,7 +24,7 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        headless: true, 
+        // headless: true, 
         baseURL: 'https://parabank.parasoft.com/parabank/index.htm',
       },
     },

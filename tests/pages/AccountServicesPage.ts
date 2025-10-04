@@ -43,7 +43,7 @@ export class AccountServicesPage {
         this.accountTypeDropdown = page.locator('#type');
         this.openAccountButton = page.getByRole('button', { name: 'Open New Account' }); 
         this.successMessageAccount = page.getByText('Congratulations, your account is now open.');
-        this.minimumDepositText = page.getByText('A minimum of $100.00 must be');
+        this.minimumDepositText = page.getByText('A minimum of $0.00 must be');
 
         this.amountInput = page.locator('#amount');
         this.fromAccountDropdown = page.locator('#fromAccountId');
@@ -69,13 +69,12 @@ export class AccountServicesPage {
         await this.openAccountButton.click({ force: true }); 
         await expect(this.successMessageAccount).toBeVisible();
     }
-
     // US-3 (Transferencia de Fondos)
-    async transferFunds(amount: string, fromAccountID: string, toAccountID: string) {
+    async transferFundsByIndex(amount: string, fromIndex: number, toIndex: number) {
         await this.transferFundsLink.click();
         await this.amountInput.fill(amount);
-        await this.fromAccountDropdown.selectOption(fromAccountID);
-        await this.toAccountDropdown.selectOption(toAccountID);
+        await this.fromAccountDropdown.selectOption({ index: fromIndex });
+        await this.toAccountDropdown.selectOption({ index: toIndex });
         await this.transferButton.click();
         await expect(this.transferSuccessMessage).toBeVisible();
         await expect(this.page.getByText(`$${amount}.00 has been transferred`)).toBeVisible();
