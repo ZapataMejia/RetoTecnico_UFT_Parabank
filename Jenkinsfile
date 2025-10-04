@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        CI = 'true'
+        CI = 'true' 
         DOCKER_IMAGE = 'playwright-parabank-ci'
     }
 
@@ -23,7 +23,9 @@ pipeline {
         
         stage('Publish Test Results') {
             steps {
-                junit 'test-results/junit.xml'
+                sh 'ls -R test-results/' 
+                
+                junit 'test-results/junit.xml' 
                 
                 echo 'Pruebas finalizadas. Revisa los resultados publicados.'
             }
