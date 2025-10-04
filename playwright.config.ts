@@ -11,7 +11,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   timeout: 60000,
 
-  reporter: [['junit', { outputFile: 'test-results/junit.xml' }]],
+  reporter: [['junit', { outputFile: 'junit-report.xml' }]], 
 
   use: {
     actionTimeout: 15000,

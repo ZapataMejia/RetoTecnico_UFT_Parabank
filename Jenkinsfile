@@ -19,7 +19,6 @@ pipeline {
             steps {
                 sh 'rm -rf test-results || true' 
                 sh 'mkdir -p test-results' 
-                
                 sh "docker run --rm -v ${WORKSPACE}:/usr/src/app ${DOCKER_IMAGE} npx playwright test --reporter=junit"
             }
         }
@@ -27,9 +26,7 @@ pipeline {
         stage('Publish Test Results') {
             steps {
                 sh 'ls -R test-results/' 
-                
                 junit 'test-results/junit.xml' 
-                
                 echo 'Pruebas finalizadas. Revisa los resultados publicados.'
             }
         }
